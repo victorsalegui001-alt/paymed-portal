@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Payment Portal - Dark Polar</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #0a0e27;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 0, 255, 0.08) 0%, transparent 50%);
+            animation: backgroundPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 30px;
+            box-shadow: 
+                0 0 80px rgba(0, 255, 255, 0.3),
+                inset 0 0 80px rgba(138, 43, 226, 0.1);
+            padding: 50px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            animation: containerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes containerGlow {
+            0% { box-shadow: 0 0 80px rgba(0, 255, 255, 0.3), inset 0 0 80px rgba(138, 43, 226, 0.1); }
+            100% { box-shadow: 0 0 120px rgba(138, 43, 226, 0.4), inset 0 0 100px rgba(0, 255, 255, 0.15); }
+        }
+
+        .container::before,
+        .container::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #00ffff, #8a2be2) 1;
+        }
+
+        .container::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+            animation: cornerPulse 2s ease-in-out infinite;
+        }
+
+        .container::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+            animation: cornerPulse 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes cornerPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease infinite;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .tool-credit {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(138, 43, 226, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-credit::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 255, 0.1),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .tool-credit .tool-label {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .tool-credit .creator {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .google-pay-logo {
+            height: 50px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: #00ffff;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        input:focus {
+            outline: none;
+            border: 2px solid #00ffff;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.4),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 0 50px rgba(138, 43, 226, 0.8),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .secure-badge {
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(0, 255, 255, 0.7);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .card-preview {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 35px;
+            color: white;
+            position: relative;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-preview:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            animation: cardShine 4s linear infinite;
+        }
+
+        @keyframes cardShine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card-number {
+            font-size: 22px;
+            letter-spacing: 3px;
+            margin: 25px 0;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 2px 5px rgba(255, 255, 255, 0.3);
+            z-index: 1;
+        }
+
+        .card-chip::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%);
+            border-radius: 4px;
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-info span {
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                padding-bottom: 30px;
+                align-items: flex-start;
+                padding-top: 20px;
+                overflow-y: auto;
+                min-height: 100vh;
+            }
+
+            .container {
+                padding: 25px 20px 30px;
+                border-radius: 20px;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .container::before,
+            .container::after {
+                width: 40px;
+                height: 40px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+                letter-spacing: 2px;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .tool-credit {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .tool-credit .tool-label {
+                font-size: 10px;
+            }
+
+            .tool-credit .creator {
+                font-size: 16px;
+            }
+
+            .card-preview {
+                padding: 20px;
+                margin-bottom: 25px;
+            }
+
+            .card-chip {
+                width: 40px;
+                height: 32px;
+            }
+
+            .card-number {
+                font-size: 18px;
+                letter-spacing: 2px;
+                margin: 20px 0;
+            }
+
+            .card-info {
+                font-size: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            input {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .row {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            button {
+                padding: 16px;
+                font-size: 16px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                letter-spacing: 1px;
+            }
+
+            .secure-badge {
+                font-size: 10px;
+                margin-top: 15px;
+                margin-bottom: 10px;
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                padding-bottom: 40px;
+            }
+
+            .container {
+                padding: 20px 15px 25px;
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+                letter-spacing: 1px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .card-number {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+
+            .card-preview {
+                padding: 15px;
+            }
+
+            input {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Payment Portal</h1>
+            <p>Secure transaction gateway</p>
+        </div>
+
+        <div class="tool-credit">
+            <div class="tool-label">⚡ Tool hecha por ⚡</div>
+            <div class="creator">DARK POLAR</div>
+        </div>
+
+        <div class="card-preview">
+            <div class="card-chip"></div>
+            <div class="card-number" id="preview-number">•••• •••• •••• ••••</div>
+            <div class="card-info">
+                <span id="preview-name">CARDHOLDER</span>
+                <span id="preview-exp">MM/YY</span>
+            </div>
+        </div>
+
+        <form action="#" method="POST">
+            <div class="form-group">
+                <label for="cc-name">👤 Cardholder Name</label>
+                <input 
+                    type="text" 
+                    id="cc-name"
+                    name="cc-name" 
+                    autocomplete="cc-name"
+                    placeholder="As it appears on card"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="cc-number">💳 Card Number</label>
+                <input 
+                    type="text" 
+                    id="cc-number"
+                    name="cc-number" 
+                    inputmode="numeric" 
+                    autocomplete="cc-number"
+                    placeholder="0000 0000 0000 0000"
+                    maxlength="19"
+                    required
+                >
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="cc-exp">📅 Expiration</label>
+                    <input 
+                        type="text" 
+                        id="cc-exp"
+                        name="cc-exp" 
+                        inputmode="numeric" 
+                        autocomplete="cc-exp"
+                        placeholder="MM/YY"
+                        maxlength="5"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="cc-csc">🔒 CVV</label>
+                    <input 
+                        type="text" 
+                        id="cc-csc"
+                        name="cc-csc" 
+                        inputmode="numeric" 
+                        autocomplete="cc-csc"
+                        placeholder="123"
+                        maxlength="4"
+                    >
+                </div>
+            </div>
+
+            <button type="submit">⚡ Process Payment ⚡</button>
+        </form>
+
+        <div class="secure-badge">
+            🛡️ PCI-DSS Compliant • 256-bit Encryption
+        </div>
+    </div>
+
+    <script>
+        // Crear partículas
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        const ccNumber = document.getElementById('cc-number');
+        const ccExp = document.getElementById('cc-exp');
+        const ccName = document.getElementById('cc-name');
+        const form = document.querySelector('form');
+        
+        const previewNumber = document.getElementById('preview-number');
+        const previewExp = document.getElementById('preview-exp');
+        const previewName = document.getElementById('preview-name');
+
+        ccNumber.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+            if (value.length > 16) formatted = formatted.substring(0, 19);
+            e.target.value = formatted;
+            previewNumber.textContent = formatted || '•••• •••• •••• ••••';
+        });
+
+        ccExp.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+            previewExp.textContent = value || 'MM/YY';
+        });
+
+        ccName.addEventListener('input', function(e) {
+            previewName.textContent = e.target.value.toUpperCase() || 'CARDHOLDER';
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const button = form.querySelector('button');
+            button.style.background = 'linear-gradient(135deg, #00ff00, #00ffff)';
+            button.textContent = '✓ PROCESSING...';
+            
+            setTimeout(function() {
+                button.textContent = '✓ PAYMENT SUCCESSFUL';
+                setTimeout(function() {
+                    form.reset();
+                    previewNumber.textContent = '•••• •••• •••• ••••';
+                    previewExp.textContent = 'MM/YY';
+                    previewName.textContent = 'CARDHOLDER';
+                    button.style.background = 'linear-gradient(135deg, #00ffff, #8a2be2)';
+                    button.textContent = '⚡ PROCESS PAYMENT ⚡';
+                }, 1500);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
